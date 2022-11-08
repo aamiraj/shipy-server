@@ -19,12 +19,26 @@ function run() {
   try {
     const database = client.db("shipy-services");
     const servicesCollection = database.collection("services");
+    const reviewsCollection = database.collection("reviews");
+
+    app.get("/reviews", async (req, res) => {
+      const query = req.query;
+      const cursor = reviewsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
+    app.get("/reviews/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { serviceId: id };
+      const cursor = reviewsCollection.find(query);
+      const result = await cursor.toArray();
+      res.send(result);
+    });
 
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
-
       const objectId = ObjectId(id);
-      console.log(objectId);
       const query = { _id: objectId };
       const service = await servicesCollection.findOne(query);
       res.send(service);
