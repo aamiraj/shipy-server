@@ -6,6 +6,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 app.use(cors());
+app.use(express.json());
 //const data = require("./data.json");
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ghnljed.mongodb.net/?retryWrites=true&w=majority`;
@@ -21,7 +22,7 @@ function run() {
     const servicesCollection = database.collection("services");
     const reviewsCollection = database.collection("reviews");
 
-    app.get("/reviews", async (req, res) => {
+    app.get("/my-reviews", async (req, res) => {
       const query = req.query;
       const cursor = reviewsCollection.find(query);
       const result = await cursor.toArray();
@@ -45,8 +46,14 @@ function run() {
     });
 
     app.get("/services", async (req, res) => {
+      const limit = parseInt(req.query.limit);
       const query = {};
-      const cursor = servicesCollection.find(query);
+      let cursor;
+      if (limit) {
+        cursor = servicesCollection.find(query).limit(limit);
+      } else {
+        cursor = servicesCollection.find(query);
+      }
       const result = await cursor.toArray();
       res.send(result);
     });
@@ -56,6 +63,9 @@ function run() {
 
 run();
 
+app.get("/", (req, res) => {
+  res.send("Server is running...");
+});
 app.listen(port, () => {
   console.log(`Shipy app listening on port ${port}`);
 });

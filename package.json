@@ -1,10 +1,16 @@
 {
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongodb": "^4.11.0"
+  },
   "name": "y",
   "version": "1.0.0",
   "description": "This is server side app to handle data from mongodb database for shipy client side app.",
   "main": "index.js",
   "scripts": {
-    "start" : "node index.js",
+    "start": "node index.js",
     "build": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
