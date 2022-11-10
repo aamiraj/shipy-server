@@ -110,6 +110,21 @@ async function run() {
       res.send(review);
     });
 
+    app.patch("/edit-review/:id", async (req, res) => {
+      const id = req.params.id;
+      const review = req.body.review;
+      const date = req.body.date;
+      const query = { _id: ObjectId(id) };
+      const updatedDoc = {
+        $set: {
+          review: review,
+          date: date,
+        },
+      };
+      const result = await reviewsCollection.updateOne(query, updatedDoc);
+      res.send(result);
+    });
+
     app.get("/services/:id", async (req, res) => {
       const id = req.params.id;
       const objectId = ObjectId(id);
