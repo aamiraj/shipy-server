@@ -22,6 +22,13 @@ function run() {
     const servicesCollection = database.collection("services");
     const reviewsCollection = database.collection("reviews");
 
+    app.post("/review", async (req, res) => {
+      const doc = req.body;
+      //console.log(doc);
+      const result = await reviewsCollection.insertOne(doc);
+      console.log(result);
+    });
+
     app.get("/my-reviews", async (req, res) => {
       const query = req.query;
       const cursor = reviewsCollection.find(query);
