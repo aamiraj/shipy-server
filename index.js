@@ -16,6 +16,12 @@ const client = new MongoClient(uri, {
   serverApi: ServerApiVersion.v1,
 });
 
+function sortByDate(a, b) {
+  // Turn your strings into dates, and then subtract them
+  // to get a value that is either negative, positive, or zero.
+  return new Date(b.date) - new Date(a.date);
+}
+
 function run() {
   try {
     const database = client.db("shipy-services");
@@ -26,7 +32,7 @@ function run() {
       const doc = req.body;
       //console.log(doc);
       const result = await reviewsCollection.insertOne(doc);
-      console.log(result);
+      res.send(result);
     });
 
     app.get("/my-reviews", async (req, res) => {
@@ -41,7 +47,9 @@ function run() {
       const query = { serviceId: id };
       const cursor = reviewsCollection.find(query);
       const result = await cursor.toArray();
-      res.send(result);
+      const sortedByDate = result.sort(sortByDate);
+      //console.log(sortedByDate);
+      res.send(sortedByDate);
     });
 
     app.get("/services/:id", async (req, res) => {
