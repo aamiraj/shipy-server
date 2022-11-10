@@ -71,7 +71,7 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/my-reviews/:id", verifyJWT, async (req, res) => {
+    app.delete("/my-reviews/:id", async (req, res) => {
       const id = req.params.id;
       const objectId = ObjectId(id);
       const query = { _id: objectId };
@@ -79,7 +79,13 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/my-reviews", verifyJWT, async (req, res) => {
+    app.get("/my-reviews", async (req, res) => {
+      //const decoded = req.decoded;
+
+      // if (decoded.email !== req.query.email) {
+      //   res.status(403).send({ message: "unauthorized access" });
+      // }
+
       const query = req.query;
       const cursor = reviewsCollection.find(query);
       const result = await cursor.toArray();
@@ -94,6 +100,14 @@ async function run() {
       const sortedByDate = result.sort(sortByDate);
       //console.log(sortedByDate);
       res.send(sortedByDate);
+    });
+
+    app.get("/edit-review/:id", async (req, res) => {
+      const id = req.params.id;
+      const objectId = ObjectId(id);
+      const query = { _id: objectId };
+      const review = await reviewsCollection.findOne(query);
+      res.send(review);
     });
 
     app.get("/services/:id", async (req, res) => {
