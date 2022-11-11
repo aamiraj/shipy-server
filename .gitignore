@@ -2,3 +2,4 @@ data.json
 reviews.json
 .env
 node_modules
+.vercel
