@@ -50,6 +50,7 @@ async function run() {
 
     app.post("/jwt", (req, res) => {
       const user = req.body;
+      //console.log(user);
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "1d",
       });
@@ -60,7 +61,7 @@ async function run() {
       const doc = req.body;
       //console.log(doc);
       const result = await servicesCollection.insertOne(doc);
-      console.log(result);
+      //console.log(result);
       res.send(result);
     });
 
@@ -71,7 +72,7 @@ async function run() {
       res.send(result);
     });
 
-    app.delete("/my-reviews/:id", async (req, res) => {
+    app.delete("/my-reviews/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const objectId = ObjectId(id);
       const query = { _id: objectId };
@@ -79,12 +80,12 @@ async function run() {
       res.send(result);
     });
 
-    app.get("/my-reviews", async (req, res) => {
-      //const decoded = req.decoded;
+    app.get("/my-reviews", verifyJWT, async (req, res) => {
+      const decoded = req.decoded;
 
-      // if (decoded.email !== req.query.email) {
-      //   res.status(403).send({ message: "unauthorized access" });
-      // }
+      if (decoded.email !== req.query.email) {
+        return res.status(403).send({ message: "Unauthorized access" });
+      }
 
       const query = req.query;
       const cursor = reviewsCollection.find(query);
@@ -110,7 +111,7 @@ async function run() {
       res.send(review);
     });
 
-    app.patch("/edit-review/:id", async (req, res) => {
+    app.patch("/edit-review/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const review = req.body.review;
       const date = req.body.date;
